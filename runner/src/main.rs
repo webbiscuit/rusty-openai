@@ -8,7 +8,7 @@ struct Prompt {
     model: String,
     prompt: String,
     max_tokens: u32,
-    temperature: u32,
+    temperature: f32,
 }
 
 #[derive(Deserialize)]
@@ -30,9 +30,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let prompt = Prompt {
         model: "text-davinci-003".to_string(),
-        prompt: "Is this okay?".to_string(),
-        max_tokens: 7,
-        temperature: 0,
+        prompt: "Once upon a time...".to_string(),
+        max_tokens: 20,
+        temperature: 0.5,
     };
 
     let response = client
