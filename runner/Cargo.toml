@@ -11,6 +11,6 @@ tokio = { version = "1", features = ["full"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 dotenv = "0.15.0"
-openapi = { path = "./../openaiapi" }
+openapi = { path = "./../openaiapi_generated" }
 
 
