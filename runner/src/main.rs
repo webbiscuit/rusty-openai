@@ -1,38 +1,22 @@
 use dotenv::dotenv;
-use openai_api_client::models::list_models;
-// use openai_client;
-use reqwest::Client;
-use serde::{Deserialize, Serialize};
 use std::env;
 
-#[derive(Serialize)]
-struct Prompt {
-    model: String,
-    prompt: String,
-    max_tokens: u32,
-    temperature: f32,
-}
-
-#[derive(Deserialize)]
-struct ApiResponse {
-    choices: Vec<Choice>,
-}
-
-#[derive(Deserialize)]
-struct Choice {
-    text: String,
-}
+use openapi::apis::configuration::Configuration;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
 
     let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY not found");
-    let client = Client::new();
 
-    let data = list_models(&api_key).await?;
+    let config = Configuration {
+        bearer_access_token: Some(api_key),
+        ..Default::default()
+    };
 
-    println!("Data: {:?}", data);
+    let data = openapi::apis::open_ai_api::list_models(&config).await?;
+
+    println!("Data: {:#?}", data);
 
     //openai_client::list_models();
 
