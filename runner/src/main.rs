@@ -1,7 +1,9 @@
 use dotenv::dotenv;
-use std::env;
+use openai_api_client::models::list_models;
+use std::io::Write;
+use std::{env, io};
 
-use openapi::apis::configuration::Configuration;
+// use openapi::apis::configuration::Configuration;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -9,75 +11,34 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY not found");
 
-    let config = Configuration {
-        bearer_access_token: Some(api_key),
-        ..Default::default()
-    };
+    // let data = list_models(&api_key).await?;
+    // println!("Data: {:#?}", data);
 
-    let data = openapi::apis::open_ai_api::list_models(&config).await?;
-
-    println!("Data: {:#?}", data);
-
-    //openai_client::list_models();
-
-    // let prompt = Prompt {
+    // let request = openai_api_client::completion::CreateCompletionRequest {
     //     model: "text-davinci-003".to_string(),
-    //     prompt: "Once upon a time...".to_string(),
-    //     max_tokens: 20,
-    //     temperature: 0.5,
+    //     prompt: Some("Write a tagline for an ice cream shop.".to_string()),
     // };
 
-    // let response = client
-    //     .post("https://api.openai.com/v1/completions")
-    //     .header("Authorization", format!("Bearer {}", api_key))
-    //     .json(&prompt)
-    //     .send()
-    //     .await?;
+    // let data2 = openai_api_client::completion::create_completion(&api_key, request).await?;
+    // println!("Data: {:#?}", data2);
 
-    // println!("Response: {:?}", response);
-    // println!("Response: {:?}", response.status());
+    loop {
+        print!("YOU > ");
+        io::stdout().flush().unwrap();
 
-    // if response.status() != 200 {
-    //     println!("Response: {}", response.text().await?);
-    //     return Ok(());
-    // }
+        let mut prompt = String::new();
+        std::io::stdin().read_line(&mut prompt)?;
+        prompt = prompt.trim().to_string();
 
-    // let api_response: ApiResponse = response.json().await?;
-    // let completion = api_response.choices.get(0).unwrap().text.trim();
+        //println!("Bot: {}", prompt);
 
-    // println!("Generated text: {}", completion);
-
-    // create_completion_request
-
-    // let request_prompt = create_completion_request
-    // // let prompt = CreateCompletionRequestPrompt {
-    // //     prompt: Some("Once upon a time...".to_string()),
-    // //     ..Default::default()
-    // // }
-    // let request = CreateCompletionRequest {
-    //     prompt: Some("Once upon a time...".to_string()),
-    //     // max_tokens: 20,
-    //     // temperature: 0.5,
-    //     ..Default::default()
-    // };
-    //open_ai_api::create_completion(configuration, create_completion_request);
-
-    // let mut config = apis::configuration::Configuration::new();
-    // config.bearer_access_token = Some("sk-".to_string());
-
-    // let request_prompt = models::CreateCompletionRequestPrompt {
-    //     prompt: Some(Some(Box::new("Once upon a time...".to_string()))),
-    //     ..Default::default()
-    // };
-
-    // apis::open_ai_api::create_completion(
-    //     &config,
-    //     // apis::configuration::Configuration::new(),
-    //     models::CreateCompletionRequest {
-    //         prompt: Some(Some(Box::new("Once upon a time...".to_string()))),
-    //         ..Default::default()
-    //     },
-    // );
+        let request = openai_api_client::completion::CreateCompletionRequest {
+            model: "text-davinci-003".to_string(),
+            prompt: Some(prompt),
+        };
+        let response = openai_api_client::completion::create_completion(&api_key, request).await?;
+        println!("BOT > {}", response.choices[0].text);
+    }
 
     Ok(())
 }

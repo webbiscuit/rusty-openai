@@ -1,7 +1,3 @@
-use reqwest::Client;
-use std::{collections::HashMap, error};
-
-// These require the `serde` dependency.
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
