@@ -1,5 +1,6 @@
-pub mod models;
+pub mod chat;
 pub mod completion;
+pub mod models;
 
 #[cfg(test)]
 mod tests {
