@@ -36,7 +36,7 @@ pub async fn create_chat(
     api_key: &String,
     request: CreateChatRequest,
 ) -> Result<CreateChatResponse, Box<dyn std::error::Error>> {
-    println!("Data Request: {:#?}", request);
+    // println!("Data Request: {:#?}", request);
 
     // let data_response: serde_json::Value = reqwest::Client::new()
     let data_response: CreateChatResponse = reqwest::Client::new()
