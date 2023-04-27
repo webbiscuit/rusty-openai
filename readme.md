@@ -6,7 +6,5 @@
 
 - Install rust
 - Install [just](https://github.com/casey/just)
-- Install [openapi-generator-cli](https://github.com/OpenAPITools/openapi-generator-cli)
 - Set OPENAI_API_KEY to your OpenAI API key (you can use a .env file)
-- `just generate-api`
 - `just run`
