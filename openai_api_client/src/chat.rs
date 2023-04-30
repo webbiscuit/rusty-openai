@@ -8,11 +8,11 @@ pub struct CreateChatRequest {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CreateChatResponse {
-    pub choices: Vec<CreateCompletionResponseChoice>,
+    pub choices: Vec<CreateChatResponseChoice>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct CreateCompletionResponseChoice {
+pub struct CreateChatResponseChoice {
     pub message: Message,
 }
 
