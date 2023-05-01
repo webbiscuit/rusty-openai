@@ -624,18 +624,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rusty-openai-runner"
-version = "0.1.0"
-dependencies = [
- "dotenv",
- "openai_api_client",
- "reqwest",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
 name = "ryu"
 version = "1.0.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -789,6 +777,18 @@ dependencies = [
  "redox_syscall 0.3.5",
  "rustix",
  "windows-sys 0.45.0",
+]
+
+[[package]]
+name = "term_chat"
+version = "0.1.0"
+dependencies = [
+ "dotenv",
+ "openai_api_client",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tokio",
 ]
 
 [[package]]
