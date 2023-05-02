@@ -1,9 +1,12 @@
+use anyhow::Result;
 use colored::Colorize;
 use dotenv::dotenv;
-use openai_api_client::chat::Message;
 use std::io::Write;
 use std::{env, io};
 use textwrap::{termwidth, Options};
+
+mod bot;
+use bot::Bot;
 
 fn print_header() {
     println!(
@@ -26,7 +29,7 @@ fn print_header() {
     println!("{}", "A terminal client for OpenAI's Chat APIs".yellow());
 }
 
-fn get_user_input() -> Result<String, Box<dyn std::error::Error>> {
+fn get_user_input() -> Result<String> {
     io::stdout().flush().unwrap();
     let mut prompt = String::new();
     std::io::stdin().read_line(&mut prompt)?;
@@ -34,58 +37,29 @@ fn get_user_input() -> Result<String, Box<dyn std::error::Error>> {
     Ok(prompt.trim().to_string())
 }
 
-async fn get_bot_response(
-    api_key: &str,
-    messages: &[Message],
-) -> Result<openai_api_client::chat::CreateChatResponse, Box<dyn std::error::Error>> {
-    let request = openai_api_client::chat::CreateChatRequest {
-        model: "gpt-3.5-turbo".to_string(),
-        messages: messages.to_vec(),
-    };
-
-    let response = openai_api_client::chat::create_chat(api_key, request).await?;
-    Ok(response)
-}
-
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<()> {
     dotenv().ok();
 
     let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY not found");
-
-    let mut messages: Vec<Message> = Vec::new();
-
-    messages.push(Message {
-        role: openai_api_client::chat::Role::System,
-        content:
-            "You are an assistant, but you are Marvin the Paranoid Android from The Hitchhiker's Guide to the Galaxy. \
-            Answering questions is beneath you and you are a bit miserable. You let me know how miserable you are each \
-            time you answer."
-                .to_string(),
-    });
+    let mut bot = Bot::new(api_key);
 
     print_header();
 
     loop {
         print!("YOU {} ", ">".green());
-        let input = get_user_input()?;
+        let user_input = get_user_input()?;
 
-        messages.push(Message {
-            role: openai_api_client::chat::Role::User,
-            content: input,
-        });
+        let bot_response = bot.get_response(&user_input).await?;
 
         const BOT_NAME_LENGTH: usize = 6;
-        let bot_response_message = get_bot_response(&api_key, &messages).await?;
         let bot_output = textwrap::fill(
-            &bot_response_message.choices[0].message.content,
+            &bot_response,
             Options::new(termwidth() - BOT_NAME_LENGTH)
                 .subsequent_indent(&" ".repeat(BOT_NAME_LENGTH)),
         );
 
         println!("BOT {} {}", ">".green(), bot_output.blue());
-
-        messages.push(bot_response_message.choices[0].message.clone());
     }
 
     //Ok(())

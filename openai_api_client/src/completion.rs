@@ -1,3 +1,4 @@
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -19,7 +20,7 @@ pub struct CreateCompletionResponseChoice {
 pub async fn create_completion(
     api_key: &String,
     request: CreateCompletionRequest,
-) -> Result<CreateCompletionResponse, Box<dyn std::error::Error>> {
+) -> Result<CreateCompletionResponse> {
     // let data_response: serde_json::Value = reqwest::Client::new()
     let data_response: CreateCompletionResponse = reqwest::Client::new()
         .post("https://api.openai.com/v1/completions")

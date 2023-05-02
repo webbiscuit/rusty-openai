@@ -1,3 +1,4 @@
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -11,7 +12,7 @@ struct Response {
     data: Vec<Model>,
 }
 
-pub async fn list_models(api_key: &String) -> Result<Vec<Model>, Box<dyn std::error::Error>> {
+pub async fn list_models(api_key: &String) -> Result<Vec<Model>> {
     // let data_response: serde_json::Value = reqwest::Client::new()
     let data_response: Response = reqwest::Client::new()
         .get("https://api.openai.com/v1/models")

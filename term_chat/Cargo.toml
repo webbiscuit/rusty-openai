@@ -14,3 +14,4 @@ dotenv = "0.15.0"
 openai_api_client = { path = "./../openai_api_client" }
 colored = "2.0.0"
 textwrap = { version = "0.16.0", features = ["terminal_size"] }
+anyhow = "1.0.71"

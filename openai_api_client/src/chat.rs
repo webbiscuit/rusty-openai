@@ -1,3 +1,4 @@
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -32,10 +33,7 @@ pub enum Role {
     Assistant,
 }
 
-pub async fn create_chat(
-    api_key: &str,
-    request: CreateChatRequest,
-) -> Result<CreateChatResponse, Box<dyn std::error::Error>> {
+pub async fn create_chat(api_key: &str, request: CreateChatRequest) -> Result<CreateChatResponse> {
     // println!("Data Request: {:#?}", request);
 
     // let data_response: serde_json::Value = reqwest::Client::new()
