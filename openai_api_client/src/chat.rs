@@ -33,7 +33,7 @@ pub enum Role {
 }
 
 pub async fn create_chat(
-    api_key: &String,
+    api_key: &str,
     request: CreateChatRequest,
 ) -> Result<CreateChatResponse, Box<dyn std::error::Error>> {
     // println!("Data Request: {:#?}", request);

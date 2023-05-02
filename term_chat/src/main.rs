@@ -5,8 +5,6 @@ use std::io::Write;
 use std::{env, io};
 use textwrap::{termwidth, Options};
 
-// use openapi::apis::configuration::Configuration;
-
 fn print_header() {
     println!(
         "{}",
@@ -26,6 +24,27 @@ fn print_header() {
     );
     // println!("{}", "TermChat".green());
     println!("{}", "A terminal client for OpenAI's Chat APIs".yellow());
+}
+
+fn get_user_input() -> Result<String, Box<dyn std::error::Error>> {
+    io::stdout().flush().unwrap();
+    let mut prompt = String::new();
+    std::io::stdin().read_line(&mut prompt)?;
+
+    Ok(prompt.trim().to_string())
+}
+
+async fn get_bot_response(
+    api_key: &str,
+    messages: &[Message],
+) -> Result<openai_api_client::chat::CreateChatResponse, Box<dyn std::error::Error>> {
+    let request = openai_api_client::chat::CreateChatRequest {
+        model: "gpt-3.5-turbo".to_string(),
+        messages: messages.to_vec(),
+    };
+
+    let response = openai_api_client::chat::create_chat(api_key, request).await?;
+    Ok(response)
 }
 
 #[tokio::main]
@@ -49,33 +68,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     loop {
         print!("{} {} ", "YOU", ">".green());
-        io::stdout().flush().unwrap();
-
-        let mut prompt = String::new();
-        std::io::stdin().read_line(&mut prompt)?;
-        prompt = prompt.trim().to_string();
+        let input = get_user_input()?;
 
         messages.push(Message {
             role: openai_api_client::chat::Role::User,
-            content: prompt.clone(),
+            content: input,
         });
 
-        let request = openai_api_client::chat::CreateChatRequest {
-            model: "gpt-3.5-turbo".to_string(),
-            messages: messages.clone(),
-        };
-
-        let response = openai_api_client::chat::create_chat(&api_key, request).await?;
-        let response_message = textwrap::fill(
-            &response.choices[0].message.content,
+        let bot_response_message = get_bot_response(&api_key, &messages).await?;
+        let bot_output = textwrap::fill(
+            &bot_response_message.choices[0].message.content,
             Options::new(termwidth() - 6).subsequent_indent(&" ".repeat(6)),
         );
 
-        let bot_output = &format!("{} {} {}", "BOT", ">".green(), response_message.blue());
+        println!("{} {} {}", "BOT", ">".green(), bot_output.blue());
 
-        println!("{}", bot_output);
-
-        messages.push(response.choices[0].message.clone());
+        messages.push(bot_response_message.choices[0].message.clone());
     }
 
     //Ok(())
