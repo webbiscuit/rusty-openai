@@ -67,7 +67,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     print_header();
 
     loop {
-        print!("{} {} ", "YOU", ">".green());
+        print!("YOU {} ", ">".green());
         let input = get_user_input()?;
 
         messages.push(Message {
@@ -75,13 +75,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             content: input,
         });
 
+        const BOT_NAME_LENGTH: usize = 6;
         let bot_response_message = get_bot_response(&api_key, &messages).await?;
         let bot_output = textwrap::fill(
             &bot_response_message.choices[0].message.content,
-            Options::new(termwidth() - 6).subsequent_indent(&" ".repeat(6)),
+            Options::new(termwidth() - BOT_NAME_LENGTH)
+                .subsequent_indent(&" ".repeat(BOT_NAME_LENGTH)),
         );
 
-        println!("{} {} {}", "BOT", ">".green(), bot_output.blue());
+        println!("BOT {} {}", ">".green(), bot_output.blue());
 
         messages.push(bot_response_message.choices[0].message.clone());
     }
