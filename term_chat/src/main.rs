@@ -3,7 +3,7 @@ use dotenv::dotenv;
 use openai_api_client::chat::Message;
 use std::io::Write;
 use std::{env, io};
-use textwrap::Options;
+use textwrap::{termwidth, Options};
 
 // use openapi::apis::configuration::Configuration;
 
@@ -66,12 +66,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         };
 
         let response = openai_api_client::chat::create_chat(&api_key, request).await?;
-        let response_message = &response.choices[0].message.content;
-        
-        let bot_output = textwrap::fill(
-            &format!("{} {} {}", "BOT", ">".green(), response_message.blue()),
-            Options::with_termwidth(),
+        let response_message = textwrap::fill(
+            &response.choices[0].message.content,
+            Options::new(termwidth() - 6).subsequent_indent(&" ".repeat(6)),
         );
+
+        let bot_output = &format!("{} {} {}", "BOT", ">".green(), response_message.blue());
 
         println!("{}", bot_output);
 
