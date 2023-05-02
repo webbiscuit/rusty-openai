@@ -3,6 +3,7 @@ use dotenv::dotenv;
 use openai_api_client::chat::Message;
 use std::io::Write;
 use std::{env, io};
+use textwrap::Options;
 
 // use openapi::apis::configuration::Configuration;
 
@@ -38,7 +39,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     messages.push(Message {
         role: openai_api_client::chat::Role::System,
         content:
-            // "You are a lovely, helpful assistant but you tell a joke related to your reply. I want puns."
             "You are an assistant, but you are Marvin the Paranoid Android from The Hitchhiker's Guide to the Galaxy. \
             Answering questions is beneath you and you are a bit miserable. You let me know how miserable you are each \
             time you answer."
@@ -66,12 +66,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         };
 
         let response = openai_api_client::chat::create_chat(&api_key, request).await?;
-        println!(
-            "{} {} {}",
-            "BOT",
-            ">".green(),
-            response.choices[0].message.content.blue()
+        let response_message = &response.choices[0].message.content;
+        
+        let bot_output = textwrap::fill(
+            &format!("{} {} {}", "BOT", ">".green(), response_message.blue()),
+            Options::with_termwidth(),
         );
+
+        println!("{}", bot_output);
 
         messages.push(response.choices[0].message.clone());
     }
