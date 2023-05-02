@@ -1,9 +1,31 @@
+use colored::Colorize;
 use dotenv::dotenv;
 use openai_api_client::chat::Message;
 use std::io::Write;
 use std::{env, io};
 
 // use openapi::apis::configuration::Configuration;
+
+fn print_header() {
+    println!(
+        "{}",
+        r" ___  ___  __                             __            ___ ".on_green()
+    );
+    println!(
+        "{}",
+        r"  |  |__  |__)  |\/| | |\ |  /\  |       /  ` |__|  /\   |  ".on_green()
+    );
+    println!(
+        "{}",
+        r"  |  |___ |  \  |  | | | \| /~~\ |___    \__, |  | /~~\  |  ".on_green()
+    );
+    println!(
+        "{}",
+        r"                                                            ".on_green()
+    );
+    // println!("{}", "TermChat".green());
+    println!("{}", "A terminal client for OpenAI's Chat APIs".yellow());
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -23,8 +45,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .to_string(),
     });
 
+    print_header();
+
     loop {
-        print!("YOU > ");
+        print!("{} {} ", "YOU", ">".green());
         io::stdout().flush().unwrap();
 
         let mut prompt = String::new();
@@ -42,7 +66,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         };
 
         let response = openai_api_client::chat::create_chat(&api_key, request).await?;
-        println!("BOT > {}", response.choices[0].message.content);
+        println!(
+            "{} {} {}",
+            "BOT",
+            ">".green(),
+            response.choices[0].message.content.blue()
+        );
 
         messages.push(response.choices[0].message.clone());
     }
