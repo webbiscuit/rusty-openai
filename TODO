@@ -1,0 +1,11 @@
+
+Todo:
+  [] Fix token limits
+  [] Logging out to file
+  [] CLI options
+  [] More Personalities
+  [] Easier way to exit
+  [x] Headers
+  [x] Output on different lines
+  [x] Coloured output
+  [] Model switching
